@@ -1,0 +1,132 @@
+<%- include('../partials/header') -%>
+<style>
+  .wh-header{
+    background: #6c757d;
+  }
+  .course-title{
+    width: 100%;
+    height:45px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
+  }
+  #menus{
+    margin-top:17px;
+  }
+</style>
+<%- include('../partials/account-menu') -%>
+
+<div class="cbp-row">
+  <div class="cbp-container">
+    <div class="one whole wh-padding">
+      <nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb">
+          <ul class="trail-items" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+              <meta name="numberOfItems" content="2">
+              <meta name="itemListOrder" content="Ascending">
+              <li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem" class="trail-item trail-begin"><a href="/dashboard" rel="home" itemprop="item"><span itemprop="name">Dashboard</span></a>
+                  <meta itemprop="position" content="1">
+              </li>
+              <li itemprop="itemListElement" itemscope="" itemtype="http://schema.org/ListItem" class="trail-item trail-end"><span itemprop="item"><span itemprop="name">Search Courses</span></span>
+                  <meta itemprop="position" content="2">
+              </li>
+          </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="cbp-row">
+  <div class="cbp-container">
+    <div class="one whole wh-padding">
+
+          <form class="search-form-wrap search-for-courses">
+              <ul>
+                  <li>
+                      <select name="sem" id="sem">
+                          <option value="1">First Semester</option>
+                          <option value="2">Second Semester</option>
+                          <option value="3">Summer</option>
+                      </select>
+                  </li>
+                  <li>
+                      <input onkeyup="search_course()" id="keyword" type="text" value="" name="keyword" placeholder="Search Course">
+                  </li>
+                  <li class="search-courses-button-item">
+                      <button onclick='search_course()' type="button" class="wh-button">Search</button>
+                  </li>
+              </ul>
+          </form>
+    </div>
+  </div>
+</div>
+
+<div class="cbp-row" style="margin-top:15px;">
+  <div class="vc_row linp-featured-courses-carousel wh-similar-courses">
+      <div class="cbp-container">
+          <div class="strecher" id="course_div">
+              <% results.forEach(function(result, index){ %>
+              <div class="one fourth wh-padding owl-item" style="margin-top:18px;">
+                      <div class="img-container">
+                          <a href="/course/<%=result.course_id%>" title="<%=result.course_name%>"><img style="width:440px;height:200px;" src="<%=result.course_img%>" class="featured-course-thumb wp-post-image" alt=""></a>
+                      </div>
+                      <div class="item-inner-wrap">
+                          <h3 class="course-title">
+  									          <a href="/course/<%=result.course_id%>" title="<%=result.course_name%>"><%=result.course_name%></a>
+  								        </h3>
+                      </div>
+                      <div class="cbp-row">
+                          <div class="one whole">
+                              <div class="course-lesson-count">
+                                  <i class="icon-skilledtime4"></i> <%=result.course_units%> Units</div>
+                              <div class="course-lesson-count author">
+                                  <!--<i class="icon-skilledround-account-button-with-user-inside2"></i> 45-->
+                                </div>
+                          </div>
+                      </div>
+              </div>
+              <% }); %>
+          </div>
+      </div>
+  </div>
+</div>
+<script type="text/javascript">
+function search_course(){
+  var sem = $('#sem').val();
+  var keyword = $('#keyword').val();
+  $.ajax({
+    url:'/search-course',
+    type:'POST',
+    dataType: "json",
+    data:{"sem":sem,"keyword":keyword}
+  }).done(function(data){
+    if(data!='0'){
+    var course='';
+      for(var i=0; i<data.length; i++){
+            course+=`<div class='one fourth wh-padding owl-item' style='margin-top:18px;'>
+                    <div class='img-container'>
+                        <a href='/course/${data[i].course_id}' title='${data[i].course_name}'><img style='width:440px;height:200px;' src='${data[i].course_img}' class='featured-course-thumb wp-post-image' alt='${data[i].course_name}'></a>
+                    </div>
+                    <div class='item-inner-wrap'>
+                        <h3 class='course-title'>
+                            <a href='/course/${data[i].course_id}' title='${data[i].course_name}'>${data[i].course_name}</a>
+                        </h3>
+                    </div>
+                    <div class='cbp-row'>
+                        <div class='one whole'>
+                            <div class='course-lesson-count'>
+                                <i class='icon-skilledtime4'></i> ${data[i].course_units} Units</div>
+                            <div class='course-lesson-count author'>
+                            </div>
+                        </div>
+                    </div>
+            </div>`;
+      }
+      $('#course_div').html('');
+      $('#course_div').html(course);
+    }else{
+      $('#course_div').html("<div class='cbp-row'><div class='one whole wh-padding'><h1>No result found!</h1></div></div>");
+    }
+  });
+}
+</script>
+<%- include('../partials/simple-footer') -%>
+<%- include('../partials/last-part') -%>

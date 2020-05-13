@@ -1,0 +1,220 @@
+<style>
+  .control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  .control__indicator {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #e6e6e6;
+  }
+  .control--radio .control__indicator {
+    border-radius: 50%;
+  }
+  .control:hover input ~ .control__indicator,
+  .control input:focus ~ .control__indicator {
+    background: #ccc;
+  }
+  .control input:checked ~ .control__indicator {
+    background: #4CAF50;
+  }
+  .control:hover input:not([disabled]):checked ~ .control__indicator,
+  .control input:checked:focus ~ .control__indicator {
+    background: #4CAF50;
+  }
+  .control input:disabled ~ .control__indicator {
+    background: #e6e6e6;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .control__indicator:after {
+    content: '';
+    position: absolute;
+    display: none;
+  }
+  .control input:checked ~ .control__indicator:after {
+    display: block;
+  }
+  .control--checkbox .control__indicator:after {
+    left: 8px;
+    top: 4px;
+    width: 3px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .control--checkbox input:disabled ~ .control__indicator:after {
+    border-color: #7b7b7b;
+  }
+  .control--radio .control__indicator:after {
+    left: 7px;
+    top: 7px;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .control--radio input:disabled ~ .control__indicator:after {
+    background: #7b7b7b;
+  }
+
+</style>
+
+<!-- Create Exam Modal -->
+<div class="modal fade" id="modal-select-question" tabindex="-1" role="dialog" aria-labelledby="modal-select-question" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <form id="set-question-form" onsubmit="return false;">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Select Question</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body entry-content one whole wh-padding">
+          <div class="row">
+            <div class="col-12" id="question_list_div">
+
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button id="set-question-btn" type="submit" class="btn btn-primary">Set Question</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+function load_questions(loId, id){
+  var flag = false;
+  $('#question_list_div').html('');
+  $.ajax({
+      url: '/course/<%=exam.course_id%>/load-questions/'+loId,
+      type: 'POST',
+      data: null,
+      async:false,
+      success: function(html){
+      },
+  }).done(function(data) {
+      if(data.length<1){
+        $('#question_list_div').append(`
+        <p>No question available!</p>
+        `);
+      }else{
+        flag=true;
+        console.log(data);
+        $('#question_list_div').html('');
+        for(var i=0; i<data.length; i++){
+            $('#question_list_div').append(`
+            <label class="control control--radio" style="border-bottom:1px solid #ccc">
+            <p><b>${i+1}.) ${data[i].question_desc}</b></p>
+            <ol type="A">
+              <li>${data[i].question_pa_1}</li>
+              <li>${data[i].question_pa_2}</li>
+              <li>${data[i].question_pa_3}</li>
+              <li>${data[i].question_pa_4}</li>
+            </ol>
+            <p>The correct answer is "<b>${data[i].question_correct}<b>".</p>
+            <input value='${JSON.stringify(data[i])}' class="question_list" name="${id}" type="radio" />
+            <div class="control__indicator"></div>
+            </label>
+            `);
+        }
+      }
+
+  });
+  if(flag){
+    console.log(true);
+    return true;
+  }else{
+    console.log(false);
+    return false;
+  }
+}
+
+$(document).ready(function(){
+  $("#set-question-form").submit(function(){
+     if ($('.question_list').filter(':checked').length < 1){
+        alert("Check atmost one question!");
+        return false;
+     }else{
+       var id = $('.question_list').filter(':checked').attr("name");
+       var data = JSON.parse($('.question_list').filter(':checked').val());
+       console.log(data);
+
+       $(`#question_id_old_${id}`).val($(`#question_id_${id}`).val());
+       var question_form = `
+       <input id="question_id_${id}" value="${data.question_identifier}" name="question_identifier" type="text" hidden readonly required>
+       <div class="row">
+           <div class="col-6">
+               <label>Question Name</label>
+               <input value="${data.question_name}" class="input-group" type="text" name="question_name" placeholder="Question Name" required/>
+           </div>
+           <div class="col-6">
+               <label>Points</label>
+               <input value="${data.question_pts}" class="input-group" type="text" name="question_pts" placeholder="Points" required/>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col-12">
+               <label>Enter your question and multiple answers, then select the one correct answer.</label>
+               <textarea name="question_desc" rows="8" required>${data.question_desc}</textarea>
+           </div>
+       </div>
+       <div class="row">
+           <div class="col-6">
+               <input  ${data.question_correct=='A'?'checked':''} id="correct_ans_1_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_1_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('A');}" >
+               <label for="correct_ans_1_${id}">Answer A</label>
+               <input value="${data.question_pa_1}" class="input-group" type="text" id="question_pa_1_${id}" name="question_pa_1" placeholder="Possible Answer A" required onkeyup="if($('#correct_ans_1_${id}').is(':checked')){$('#question_correct_${id}').val('A');}" />
+           </div>
+           <div class="col-6">
+               <input ${data.question_correct=='B'?'checked':''} id="correct_ans_2_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_2_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('B');}">
+               <label for="correct_ans_2_${id}">Answer B</label>
+               <input  value="${data.question_pa_2}" class="input-group" type="text" id="question_pa_2_${id}" name="question_pa_2" placeholder="Possible Answer B" required onkeyup="if($('#correct_ans_2_${id}').is(':checked')){$('#question_correct_${id}').val('B');}" />
+           </div>
+       </div>
+       <div class="row">
+           <div class="col-6">
+               <input  ${data.question_correct=='C'?'checked':''} id="correct_ans_3_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_3_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('C');}">
+               <label for="correct_ans_3_${id}">Answer C</label>
+               <input  value="${data.question_pa_3}" class="input-group" type="text" id="question_pa_3_${id}" name="question_pa_3" placeholder="Possible Answer C" required onkeyup="if($('#correct_ans_3_${id}').is(':checked')){$('#question_correct_${id}').val('C');}" />
+           </div>
+           <div class="col-6">
+               <input  ${data.question_correct=='D'?'checked':''} id="correct_ans_4_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_4_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('D');}">
+               <label for="correct_ans_4_${id}">Answer D</label>
+               <input  value="${data.question_pa_4}" class="input-group" type="text" id="question_pa_4_${id}" name="question_pa_4" placeholder="Possible Answer D" required onkeyup="if($('#correct_ans_4_${id}').is(':checked')){$('#question_correct_${id}').val('D');}" />
+           </div>
+       </div>
+       <input class="correct-answer" value="${data.question_correct}" id="question_correct_${id}" type="text" name="question_correct" readonly hidden required>
+       <div class="row">
+           <div class="col-12">
+               <button id="form_btn_${id}" type="submit" class="btn btn-small submit_button btn-primary">Save</button>
+           </div>
+       </div>
+       <a id="" value="${id}" style="color:red" href="${data.lo_id}" class="remove_field"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>`;
+       $('#q_div_'+id).html(question_form);
+       submit_question(id);
+
+       $(`#badge${id}`).html(`<span  class="badge badge-secondary">Question is Set</span>`);
+       $('#modal-select-question').modal("hide");
+       return false;
+     }
+    });
+});
+</script>

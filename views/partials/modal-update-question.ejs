@@ -1,0 +1,286 @@
+<style>
+
+.input-group{
+  font-size:15px;
+  border: 1px solid #ccc;
+  border-radius:2px;
+}
+.row{
+  margin-top:10px;
+}
+
+.question-box{
+  padding: 16px;
+  margin-top:15px;
+  border: 1px solid #C7CDD1;
+}
+
+.btn-small{
+  font-size: .875rem;
+  margin:5px;
+}
+
+.radiobtn:checked,
+.radiobtn:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+.radiobtn:checked + label,
+.radiobtn:not(:checked) + label
+{
+    position: relative;
+    padding-left: 28px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+    color: #666;
+
+}
+.radiobtn:checked + label{
+  color:#4CAF50;
+  font-weight:800;
+}
+.radiobtn:checked + label + input[type="text"]{
+  border:solid 1px #4CAF50;
+  font-weight:800;
+}
+
+
+.radiobtn:checked + label:before,
+.radiobtn:not(:checked) + label:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #bbc1e1;
+    border-radius: 100%;
+    background: #fff;
+
+}
+
+.radiobtn:checked + label:after,
+.radiobtn:not(:checked) + label:after {
+    content: '';
+    width: 12px;
+    height: 12px;
+    background: #4CAF50;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+    color:red;
+}
+
+
+.radiobtn:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+
+
+}
+.radiobtn:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+
+}
+
+@keyframes blink {
+    /**
+     * At the start of the animation the dot
+     * has an opacity of .2
+     */
+    0% {
+      opacity: .2;
+    }
+    /**
+     * At 20% the dot is fully visible and
+     * then fades out slowly
+     */
+    20% {
+      opacity: 1;
+    }
+    /**
+     * Until it reaches an opacity of .2 and
+     * the animation can start again
+     */
+    100% {
+      opacity: .2;
+    }
+}
+
+.saving span {
+    /**
+     * Use the blink animation, which is defined above
+     */
+    animation-name: blink;
+    /**
+     * The animation should take 1.4 seconds
+     */
+    animation-duration: 1.4s;
+    /**
+     * It will repeat itself forever
+     */
+    animation-iteration-count: infinite;
+    /**
+     * This makes sure that the starting style (opacity: .2)
+     * of the animation is applied before the animation starts.
+     * Otherwise we would see a short flash or would have
+     * to set the default styling of the dots to the same
+     * as the animation. Same applies for the ending styles.
+     */
+    animation-fill-mode: both;
+    font-weight:800;
+}
+
+.saving span:nth-child(2) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .2s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .2s;
+}
+
+.saving span:nth-child(3) {
+    /**
+     * Starts the animation of the third dot
+     * with a delay of .4s, otherwise all dots
+     * would animate at the same time
+     */
+    animation-delay: .4s;
+}
+
+.question-number{
+  font-family:'Raleway';
+  font-weight:800;
+  font-size:26px;
+  color:#333333;
+}
+
+</style>
+
+<!-- Create Exam Modal -->
+<div class="modal fade" id="update-question" tabindex="-1" role="dialog" aria-labelledby="modal-update" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+          <div class="question-number text-center">Update Question No. <span id="itemNo">1</span></div>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body entry-content one whole wh-padding">
+          <div class="row">
+            <div class="col-12">
+              <div class="alert alert-success alert-dismissible hidden" role="alert">
+                <strong>Well done!</strong> You've successfully update this question.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12" id="q_div">
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+
+function load_single_question(id, examId, itemNo){
+  var url = `/question/<%=course.course_id%>/single-question/${examId}/${id}`;
+  $.ajax({
+      url: url,
+      type: 'POST',
+      data: null,
+  }).done(function(data) {
+    console.log(data);
+
+    var question_form = `
+    <form method="POST" id="form_${id}" onsubmit="submit_question('${id}');return false;">
+    <input id="question_id_${id}" value="${data.question_identifier}" name="question_identifier" type="text" hidden readonly required>
+    <div class="row">
+        <div class="col-6">
+            <label>Question Name</label>
+            <input value="${data.question_name}" class="input-group" type="text" name="question_name" placeholder="Question Name" required/>
+        </div>
+        <div class="col-6">
+            <label>Points</label>
+            <input value="${data.question_pts}" class="input-group" type="text" name="question_pts" placeholder="Points" required/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <label>Enter your question and multiple answers, then select the one correct answer.</label>
+            <textarea name="question_desc" rows="8" required>${data.question_desc}</textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <input  ${data.question_correct=='A'?'checked':''} id="correct_ans_1_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_1_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('A');}" >
+            <label for="correct_ans_1_${id}">Answer A</label>
+            <input value="${data.question_pa_1}" class="input-group" type="text" id="question_pa_1_${id}" name="question_pa_1" placeholder="Possible Answer A" required onkeyup="if($('#correct_ans_1_${id}').is(':checked')){$('#question_correct_${id}').val('A');}" />
+        </div>
+        <div class="col-6">
+            <input ${data.question_correct=='B'?'checked':''} id="correct_ans_2_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_2_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('B');}">
+            <label for="correct_ans_2_${id}">Answer B</label>
+            <input  value="${data.question_pa_2}" class="input-group" type="text" id="question_pa_2_${id}" name="question_pa_2" placeholder="Possible Answer B" required onkeyup="if($('#correct_ans_2_${id}').is(':checked')){$('#question_correct_${id}').val('B');}" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <input  ${data.question_correct=='C'?'checked':''} id="correct_ans_3_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_3_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('C');}">
+            <label for="correct_ans_3_${id}">Answer C</label>
+            <input  value="${data.question_pa_3}" class="input-group" type="text" id="question_pa_3_${id}" name="question_pa_3" placeholder="Possible Answer C" required onkeyup="if($('#correct_ans_3_${id}').is(':checked')){$('#question_correct_${id}').val('C');}" />
+        </div>
+        <div class="col-6">
+            <input  ${data.question_correct=='D'?'checked':''} id="correct_ans_4_${id}" class="radiobtn" type="radio" name="correct_ans_radio" onclick="if($('#question_pa_4_${id}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${id}').val('D');}">
+            <label for="correct_ans_4_${id}">Answer D</label>
+            <input  value="${data.question_pa_4}" class="input-group" type="text" id="question_pa_4_${id}" name="question_pa_4" placeholder="Possible Answer D" required onkeyup="if($('#correct_ans_4_${id}').is(':checked')){$('#question_correct_${id}').val('D');}" />
+        </div>
+    </div>
+    <input class="correct-answer" value="${data.question_correct}" id="question_correct_${id}" type="text" name="question_correct" readonly hidden required>
+    <div class="row">
+        <div class="col-12 text-center">
+            <button id="form_btn_${id}" type="submit" class="btn btn-small submit_button btn-primary">Save</button>
+        </div>
+    </div>
+    `;
+    $('#q_div').html('');
+    $('#q_div').html(question_form);
+    $('#itemNo').html(itemNo);
+  });
+}
+
+function submit_question(id){
+  var loading =`<div class="saving">Saving<span>.</span><span>.</span><span>.</span></div>`;
+  $('#form_btn_'+id).html(loading);
+  var url = '/course/question/update';
+  $.ajax({
+      url: url,
+      type: 'POST',
+      data: $('#form_'+id).serialize(),
+      success: function(html){
+        setTimeout(function() {
+          $('#form_btn_'+id).html('<i class="fa fa-save"></i> Saved');
+         }, 2000);
+      },
+  }).done(function(data) {
+      $('.alert').removeClass("hidden");
+      $('.alert').fadeTo(2000, 1000).slideUp(1000, function(){
+          $('.alert').slideUp(1000);
+      });
+      console.log(data);
+  });
+  return false;
+}
+</script>

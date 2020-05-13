@@ -1,0 +1,305 @@
+<%- include('../partials/header') -%>
+<!-- Include stylesheet -->
+<link href="/stylesheets/bootstrap-toggle.min.css" rel="stylesheet">
+
+<style>
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font: 16px 'Source Sans Pro', sans-serif;
+  border: none;
+  box-sizing: border-box;
+}
+
+  .wh-header{
+    background: #6c757d;
+  }
+  .course-title{
+    width: 100%;
+    height:45px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
+  }
+  #menus{
+    margin-top:17px;
+  }
+  .entry{
+    font-size: 1rem;
+    padding: 15px 25px 5px;
+    box-sizing: border-box;
+    border: 1px solid #C7CDD1;
+    margin:1px;
+  }
+  .entry:hover{
+    background:#ecf0f1;
+  }
+  .entry a{
+    font-family:'Raleway';
+    text-transform:uppercase;
+    font-weight:200px;
+    font-weight:800;
+    color:#000000;
+  }
+  .input-group{
+    font-size:15px;
+    border: 1px solid #ccc;
+    border-radius:2px;
+  }
+  .row{
+    margin-top:15px;
+  }
+
+  .question-box{
+    padding: 16px;
+    margin-top:15px;
+    border: 1px solid #C7CDD1;
+  }
+
+  .btn-small{
+    font-size: .875rem;
+    margin:5px;
+  }
+
+  .radiobtn:checked,
+  .radiobtn:not(:checked) {
+      position: absolute;
+      left: -9999px;
+  }
+  .radiobtn:checked + label,
+  .radiobtn:not(:checked) + label
+  {
+      position: relative;
+      padding-left: 28px;
+      cursor: pointer;
+      line-height: 20px;
+      display: inline-block;
+      color: #666;
+      margin: 4px;
+      padding: 12px;
+      width: 100%;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+
+  }
+
+  .radiobtn:checked + label{
+    color:#4CAF50;
+    font-weight:800;
+  }
+  .radiobtn:checked + label + input[type="text"]{
+    border:solid 1px #4CAF50;
+    font-weight:800;
+  }
+
+
+  .radiobtn:checked + label:before,
+  .radiobtn:not(:checked) + label:before {
+      content: '';
+      position: absolute;
+      left: 1;
+      top: 1;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #bbc1e1;
+      border-radius: 100%;
+      background: #fff;
+
+  }
+
+  .radiobtn:checked + label:after,
+  .radiobtn:not(:checked) + label:after {
+      content: '';
+      width: 14px;
+      height: 14px;
+      background: #4CAF50;
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      border-radius: 100%;
+      -webkit-transition: all 0.2s ease;
+      transition: all 0.2s ease;
+      color:red;
+  }
+
+
+  .radiobtn:not(:checked) + label:after {
+      opacity: 0;
+      -webkit-transform: scale(0);
+      transform: scale(0);
+
+
+  }
+  .radiobtn:checked + label:after {
+      opacity: 1;
+      -webkit-transform: scale(1);
+      transform: scale(1);
+
+  }
+
+  @keyframes blink {
+      /**
+       * At the start of the animation the dot
+       * has an opacity of .2
+       */
+      0% {
+        opacity: .2;
+      }
+      /**
+       * At 20% the dot is fully visible and
+       * then fades out slowly
+       */
+      20% {
+        opacity: 1;
+      }
+      /**
+       * Until it reaches an opacity of .2 and
+       * the animation can start again
+       */
+      100% {
+        opacity: .2;
+      }
+  }
+
+  .saving span {
+      /**
+       * Use the blink animation, which is defined above
+       */
+      animation-name: blink;
+      /**
+       * The animation should take 1.4 seconds
+       */
+      animation-duration: 1.4s;
+      /**
+       * It will repeat itself forever
+       */
+      animation-iteration-count: infinite;
+      /**
+       * This makes sure that the starting style (opacity: .2)
+       * of the animation is applied before the animation starts.
+       * Otherwise we would see a short flash or would have
+       * to set the default styling of the dots to the same
+       * as the animation. Same applies for the ending styles.
+       */
+      animation-fill-mode: both;
+      font-weight:800;
+  }
+
+  .saving span:nth-child(2) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .2s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .2s;
+  }
+
+  .saving span:nth-child(3) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .4s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .4s;
+  }
+
+  .question-number{
+    font-family:'Raleway';
+    font-weight:800;
+    font-size:26px;
+    color:#333333;
+  }
+
+  #quiz {
+    margin: -44px 50px 0px;
+    position: relative;
+    width: calc(100% - 100px);
+  }
+
+  #question {
+    padding: 20px;
+    background: $light;
+  }
+
+  #question h2 {
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-size: 20px;
+  }
+
+  #question input[type=radio]:checked + label {
+    background: $brand;
+    color: $white;
+
+    box-shadow: inset 0px 0px 10px 2px $brand,
+                        0px 0px 10px 2px $blue;
+    animation: pulse 1s alternate infinite;
+  }
+
+
+  #quiz-results-message {
+    display: block;
+    color: #00403C;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  #quiz-results-score {
+    display: block;
+    color: #31706c;
+    font-size: 20px;
+  }
+
+  #quiz-results-score b {
+    color: #00403C;
+    font-weight: 600;
+    font-size: 20px;
+  }
+
+  @keyframes pulse {
+      0% {
+      box-shadow: 0px 0px 5px 2px #4CAF50;
+    }
+    100% {
+      box-shadow: 0px 0px 15px 2px #4CAF50;
+    }
+  }
+
+
+</style>
+<link rel="stylesheet" href="/stylesheets/pure-min.css">
+<%- include('../partials/account-menu') -%>
+
+<div class="cbp-row">
+  <div class="cbp-container">
+    <div class="one whole wh-padding">
+      <nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb">
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="cbp-row wh-sensei-single-course-header">
+	<div class="cbp-container">
+		<div class="wh-sensei-title-wrap wh-padding">
+      <div class="quiz-container" id="quiz">
+          <div id="question">
+          <div id="timer" class="pull-right"></div>
+          <h3 style="font-family:'Raleway';font-weight:800;color:#333333;"><%=exam_info.exam_title%></h3>
+          <h5 style="font-family:'Raleway';font-weight:400;font-size:16px;"><b>Instruction:</b> <%=exam_info.exam_instruction%></h5>
+          <div id="questions_div">
+            <div class="row">
+              <div class="col-12">
+              <p id="quiz-results-message">You took this exam already!</p>
+              <p id="quiz-results-score">Result: You got <b> <%=exam_result.exam_score%> / <%=exam_result.exam_item%></b> questions correct.</p>
+              </div>
+              <a href="/course/<%=course_id%>#examinations"><button class="pure-button" >Back</button></a>
+            </div>
+          </div>
+      </div>
+    </div>
+	</div>
+</div>
+<%- include('../partials/simple-footer') -%>
+<%- include('../partials/last-part') -%>

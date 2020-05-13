@@ -1,0 +1,564 @@
+<%- include('../partials/header') -%>
+<!-- Include stylesheet -->
+<!--<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">-->
+<!--<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">-->
+
+<style>
+  .wh-header{
+    background: #6c757d;
+  }
+  .course-title{
+    width: 100%;
+    height:45px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
+  }
+  #menus{
+    margin-top:17px;
+  }
+  .entry{
+    font-size: 1rem;
+    padding: 15px 25px 5px;
+    box-sizing: border-box;
+    border: 1px solid #C7CDD1;
+    margin:1px;
+  }
+  .entry:hover{
+    background:#ecf0f1;
+  }
+  .entry a{
+    font-family:'Raleway';
+    text-transform:uppercase;
+    font-weight:200px;
+    font-weight:800;
+    color:#000000;
+  }
+  .input-group{
+    font-size:15px;
+    border: 1px solid #ccc;
+    border-radius:2px;
+  }
+  .row{
+    margin-top:15px;
+  }
+
+  .question-box{
+    padding: 16px;
+    margin-top:15px;
+    border: 1px solid #C7CDD1;
+  }
+
+  .btn-small{
+    font-size: .875rem;
+    margin:5px;
+  }
+
+  .radiobtn:checked,
+  .radiobtn:not(:checked) {
+      position: absolute;
+      left: -9999px;
+  }
+  .radiobtn:checked + label,
+  .radiobtn:not(:checked) + label
+  {
+      position: relative;
+      padding-left: 28px;
+      cursor: pointer;
+      line-height: 20px;
+      display: inline-block;
+      color: #666;
+
+  }
+  .radiobtn:checked + label{
+    color:#4CAF50;
+    font-weight:800;
+  }
+  .radiobtn:checked + label + input[type="text"]{
+    border:solid 1px #4CAF50;
+    font-weight:800;
+  }
+
+
+  .radiobtn:checked + label:before,
+  .radiobtn:not(:checked) + label:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 18px;
+      height: 18px;
+      border: 1px solid #bbc1e1;
+      border-radius: 100%;
+      background: #fff;
+
+  }
+
+  .radiobtn:checked + label:after,
+  .radiobtn:not(:checked) + label:after {
+      content: '';
+      width: 12px;
+      height: 12px;
+      background: #4CAF50;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      border-radius: 100%;
+      -webkit-transition: all 0.2s ease;
+      transition: all 0.2s ease;
+      color:red;
+  }
+
+
+  .radiobtn:not(:checked) + label:after {
+      opacity: 0;
+      -webkit-transform: scale(0);
+      transform: scale(0);
+
+
+  }
+  .radiobtn:checked + label:after {
+      opacity: 1;
+      -webkit-transform: scale(1);
+      transform: scale(1);
+
+  }
+
+  @keyframes blink {
+      /**
+       * At the start of the animation the dot
+       * has an opacity of .2
+       */
+      0% {
+        opacity: .2;
+      }
+      /**
+       * At 20% the dot is fully visible and
+       * then fades out slowly
+       */
+      20% {
+        opacity: 1;
+      }
+      /**
+       * Until it reaches an opacity of .2 and
+       * the animation can start again
+       */
+      100% {
+        opacity: .2;
+      }
+  }
+
+  .saving span {
+      /**
+       * Use the blink animation, which is defined above
+       */
+      animation-name: blink;
+      /**
+       * The animation should take 1.4 seconds
+       */
+      animation-duration: 1.4s;
+      /**
+       * It will repeat itself forever
+       */
+      animation-iteration-count: infinite;
+      /**
+       * This makes sure that the starting style (opacity: .2)
+       * of the animation is applied before the animation starts.
+       * Otherwise we would see a short flash or would have
+       * to set the default styling of the dots to the same
+       * as the animation. Same applies for the ending styles.
+       */
+      animation-fill-mode: both;
+      font-weight:800;
+  }
+
+  .saving span:nth-child(2) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .2s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .2s;
+  }
+
+  .saving span:nth-child(3) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .4s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .4s;
+  }
+
+  .question-number{
+    font-family:'Raleway';
+    font-weight:800;
+    font-size:26px;
+    color:#333333;
+  }
+</style>
+<%- include('../partials/account-menu') -%>
+<% if(topic) {%>
+  <div class="cbp-row">
+    <div class="cbp-container">
+      <div class="one whole wh-padding">
+        <nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb">
+            <ul class="trail-items" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+                <li class="trail-item trail-begin"><a href="/dashboard" rel="home" itemprop="item"><span itemprop="name">Dashboard</span></a>
+                    <meta itemprop="position" content="1">
+                </li>
+                <li class="trail-item trail-begin"><a href="/course/<%=topic.course_id%>" rel="home" itemprop="item"><span itemprop="name"><%=course_name%></span></a>
+                    <meta itemprop="position" content="1">
+                </li>
+                <li itemprop="itemListElement" itemscope=""  class="trail-item trail-end"><span itemprop="item"><span itemprop="name">Edit Topic</span></span>
+                    <meta itemprop="position" content="2">
+                </li>
+            </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+<div class="cbp-row wh-sensei-single-course-header">
+	<div class="cbp-container">
+		<div class="wh-sensei-title-wrap wh-padding">
+      <h3>Edit Topic</h3>
+      <form id="update_topic_form" method="POST" onsubmit="update_topic(); return false;">
+        <input name="lo_id" type="text" value="<%=topic.lo_id%>" readonly hidden required>
+        <input name="teacher_id" type="text" value="<%=topic.teacher_id%>" readonly hidden required>
+        <input name="course_id" type="text" value="<%=topic.course_id%>" readonly hidden required>
+
+        <!--
+        <div class="row">
+          <div class="col-12">
+            <p class="pull-right toggle">
+              <input  id="tog" value="0" unchecked type="checkbox" data-style="slow" data-toggle="toggle" data-on="<span class='lnr lnr-checkmark-circle'></span> Published" data-off="Not published" data-onstyle="success" data-offstyle="danger">
+            </p>
+            <input name="exam_status" id="exam_status" type="text" value="" hidden readonly>
+          </div>
+          <script type="text/javascript">
+            $('.toggle').click(function(){
+              var $cb = $(this).parent().find(":checkbox");
+              if($cb.prop("checked") == true){
+                $('#exam_status').val("0");
+              }else{
+                $('#exam_status').val("1");
+              }
+            });
+          </script>
+        </div>
+        -->
+        <div class="row">
+          <div class="col-6">
+            <label>Topic:</label>
+            <input value="<%=topic.lo_topic%>" class="input-group" type="text" name="lo_topic" class="input" value="" placeholder="Topic" required>
+          </div>
+          <div class="col-6">
+            <label>Time Spent in Hour:</label>
+            <input value="<%=topic.lo_time%>" class="input-group" type="text" name="lo_time" class="input" value="" placeholder="Time Spent" required>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <label>Learning Objective:</label>
+            <textarea name="lo_desc" rows="8" ><%=topic.lo_desc%></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <button id="update_topic_btn" type="submit" class="button pull-right">Save</button>
+          </div>
+        </div>
+      </form>
+
+        <!--
+        <div class="row">
+          <div class="col-12">
+            <label>Exam Instruction:</label>
+            <!-- Create the editor container
+            <textarea name="exam_instructions" rows="8" ></textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6">
+            <label>Available from:</label>
+            <input name="exam_available" style="width:100%;" type="date" data-date-format="mm/dd/yyyy">
+          </div>
+          <div class="col-6">
+            <label>Due until:</label>
+            <input name="exam_due" style="width:100%;" type="date" data-date-format="mm/dd/yyyy">
+          </div>
+        </div>
+        -->
+
+        <div class="input_fields_wrap">
+          <% if(questions) {%>
+            <div class="row">
+              <div class="col-12">
+                <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333;"><i class="fa fa-question-circle"></i> Questions</h3>
+              </div>
+            </div>
+            <%counter=1%>
+            <% questions.forEach(function(question, index){ %>
+              <div class="question-box">
+                <div class="row">
+                  <div class="col-12">
+                    <p class="question-number">#<%=counter%></p>
+                  </div>
+                </div>
+                <form method="POST" id="question_form_<%=question.question_identifier%>" onsubmit="submit_question('question_form_<%=question.question_identifier%>');return false;">
+                <input name="teacher_id" type="text" value="<%=topic.teacher_id%>" readonly hidden required>
+                <input name="course_id" type="text" value="<%=topic.course_id%>" readonly hidden required>
+                <input name="lo_id" type="text" value="<%=topic.lo_id%>" readonly hidden required>
+                <input id="question_form_<%=question.question_identifier%>_id" value="<%=question.question_identifier%>" name="question_identifier" type="text" readonly hidden required>
+                <div class="row">
+                  <div class="col-6">
+                    <label>Question Name</label>
+                    <input value="<%=question.question_name%>" class="input-group" type="text" name="question_name" placeholder="Question Name" required/>
+                  </div>
+                  <div class="col-6">
+                    <label>Points</label>
+                    <input value="<%=question.question_pts%>" class="input-group" type="text" name="question_pts" placeholder="Points" required/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12">
+                    <label>Enter your question and multiple answers, then select the one correct answer.</label>
+                    <textarea name="question_desc" rows="8" required/><%=question.question_desc%></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <input <%if(question.question_correct=='A'){%>checked<%}%> id="correct_ans_<%=question.question_identifier%>" class="radiobtn" type="radio" name="correct_ans_<%=question.question_identifier%>"  onclick="if($('#question_pa_1_<%=question.question_identifier%>').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_<%=question.question_identifier%>').val('A');}" >
+                    <label for="correct_ans_<%=question.question_identifier%>">Answer A</label>
+                    <input value="<%=question.question_pa_1%>" class="input-group" type="text" id="question_pa_1_<%=question.question_identifier%>" name="question_pa_1" placeholder="Possible Answer A" required onkeyup="if($('#correct_ans_<%=question.question_identifier%>').is(':checked')){$('#question_correct_<%=question.question_identifier%>').val('A');}"/>
+                  </div>
+                  <div class="col-6">
+                    <input <%if(question.question_correct=='B'){%>checked<%}%> id="correct_ans_<%=question.question_identifier%>_2" class="radiobtn" type="radio" name="correct_ans_<%=question.question_identifier%>"  onclick="if($('#question_pa_2_<%=question.question_identifier%>').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_<%=question.question_identifier%>').val('B');}">
+                    <label for="correct_ans_<%=question.question_identifier%>_2">Answer B</label>
+                    <input value="<%=question.question_pa_2%>" class="input-group" type="text" id="question_pa_2_<%=question.question_identifier%>" name="question_pa_2" placeholder="Possible Answer B" required onkeyup="if($('#correct_ans_<%=question.question_identifier%>_2').is(':checked')){$('#question_correct_<%=question.question_identifier%>').val('B');}"/>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-6">
+                    <input <%if(question.question_correct=='C'){%>checked<%}%> id="correct_ans_<%=question.question_identifier%>_3" class="radiobtn" type="radio" name="correct_ans_<%=question.question_identifier%>"  onclick="if($('#question_pa_3_<%=question.question_identifier%>').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_<%=question.question_identifier%>').val('C');}">
+                    <label for="correct_ans_<%=question.question_identifier%>_3">Answer C</label>
+                    <input value="<%=question.question_pa_3%>" class="input-group" type="text" id="question_pa_3_<%=question.question_identifier%>" name="question_pa_3" placeholder="Possible Answer C" required onkeyup="if($('#correct_ans_<%=question.question_identifier%>_3').is(':checked')){$('#question_correct_<%=question.question_identifier%>').val('C');}"/>
+                  </div>
+                  <div class="col-6">
+                    <input <%if(question.question_correct=='D'){%>checked<%}%> id="correct_ans_<%=question.question_identifier%>_4" class="radiobtn" type="radio" name="correct_ans_<%=question.question_identifier%>"  onclick="if($('#question_pa_4_<%=question.question_identifier%>').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_<%=question.question_identifier%>').val('D');}">
+                    <label for="correct_ans_<%=question.question_identifier%>_4">Answer D</label>
+                    <input value="<%=question.question_pa_4%>" class="input-group" type="text" id="question_pa_4_<%=question.question_identifier%>" name="question_pa_4" placeholder="Possible Answer D" required onkeyup="if($('#correct_ans_<%=question.question_identifier%>_4').is(':checked')){$('#question_correct_<%=question.question_identifier%>').val('D');}"/>
+                  </div>
+                </div>
+                <input value="<%=question.question_correct%>" id="question_correct_<%=question.question_identifier%>" type="text" name="question_correct" readonly  hidden required>
+                <div class="row">
+                  <div class="col-12">
+                    <button id="question_form_<%=question.question_identifier%>_btn" type="submit" class="btn btn-small submit_button btn-primary">Save</button>
+                  </div>
+                </div>
+                <a id="<%=question.question_identifier%>" style="color:red" href="#" class="remove_field"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+              </form>
+              </div>
+              <%counter++%>
+            <% }); %>
+          <% }%>
+
+        </div>
+
+
+        <script type="text/javascript">
+          $(document).ready(function() {
+          	var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
+          	var add_button      = $(".add_field_button"); //Add button ID
+
+          	var x = <%=result_length%>; //initlal text box count
+          	$(add_button).click(function(e){ //on add input button click
+          		e.preventDefault();
+
+          		if(x>-1){ //max input box allowed
+          			x++; //text box increment
+          			$(wrapper).append(`
+                <div class="question-box">
+                <form method="POST" id="question_form_${x}" onsubmit="submit_question('question_form_${x}');return false;">
+                  <input name="teacher_id" type="text" value="<%=topic.teacher_id%>" readonly hidden required>
+                  <input name="course_id" type="text" value="<%=topic.course_id%>" readonly hidden required>
+                  <input name="lo_id" type="text" value="<%=topic.lo_id%>" readonly hidden required>
+                  <input id="question_form_${x}_id" value="new" name="question_identifier" type="text" readonly hidden required>
+                  <div class="row">
+                    <div class="col-12">
+                      <p class="question-number">#${x}</p>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">
+                      <label>Question Name</label>
+                      <input class="input-group" type="text" name="question_name" placeholder="Question Name" required/>
+                    </div>
+                    <div class="col-6">
+                      <label>Points</label>
+                      <input class="input-group" type="text" name="question_pts" placeholder="Points" required/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-12">
+                      <label>Enter your question and multiple answers, then select the one correct answer.</label>
+                      <textarea name="question_desc" rows="8" required/></textarea>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-6">
+                      <input checked id="correct_ans_${x}" class="radiobtn" type="radio" name="correct_ans_${x}"  onclick="if($('#question_pa_1_${x}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${x}').val('A');}" >
+                      <label for="correct_ans_${x}">Answer A</label>
+                      <input class="input-group" type="text" id="question_pa_1_${x}" name="question_pa_1" placeholder="Possible Answer A" required onkeyup="if($('#correct_ans_${x}').is(':checked')){$('#question_correct_${x}').val('A');}"/>
+                    </div>
+                    <div class="col-6">
+                      <input id="correct_ans_${x}_2" class="radiobtn" type="radio" name="correct_ans_${x}"  onclick="if($('#question_pa_2_${x}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${x}').val('B');}">
+                      <label for="correct_ans_${x}_2">Answer B</label>
+                      <input class="input-group" type="text" id="question_pa_2_${x}" name="question_pa_2" placeholder="Possible Answer B" required onkeyup="if($('#correct_ans_${x}_2').is(':checked')){$('#question_correct_${x}').val('B');}"/>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-6">
+                      <input id="correct_ans_${x}_3" class="radiobtn" type="radio" name="correct_ans_${x}"  onclick="if($('#question_pa_3_${x}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${x}').val('C');}">
+                      <label for="correct_ans_${x}_3">Answer C</label>
+                      <input class="input-group" type="text" id="question_pa_3_${x}" name="question_pa_3" placeholder="Possible Answer C" required onkeyup="if($('#correct_ans_${x}_3').is(':checked')){$('#question_correct_${x}').val('C');}"/>
+                    </div>
+                    <div class="col-6">
+                      <input id="correct_ans_${x}_4" class="radiobtn" type="radio" name="correct_ans_${x}"  onclick="if($('#question_pa_4_${x}').val()==''){alert('No answer yet!'); return false}else{$('#question_correct_${x}').val('D');}">
+                      <label for="correct_ans_${x}_4">Answer D</label>
+                      <input class="input-group" type="text" id="question_pa_4_${x}" name="question_pa_4" placeholder="Possible Answer D" required onkeyup="if($('#correct_ans_${x}_4').is(':checked')){$('#question_correct_${x}').val('D');}"/>
+                    </div>
+                  </div>
+                  <input value="A" id="question_correct_${x}" type="text" name="question_correct" readonly hidden required>
+                  <div class="row">
+                    <div class="col-12">
+                      <button id="question_form_${x}_btn" type="submit" class="btn btn-small submit_button btn-primary">Save</button>
+                    </div>
+                  </div>
+                  <a style="color:red" id="" href="#" class="remove_field"><i class="fa fa-trash" aria-hidden="true"></i> Remove</a>
+                  </form>
+                </div>
+                  `); //add input box
+          		}
+          	});
+
+              $(wrapper).on("click",".remove_field", function(e){ //user click on remove text
+                if (confirm("Are you sure?")) {
+              		e.preventDefault();
+                  var id = $(this).attr("id");
+                  if(id){
+                    var url = '/course/question/delete/'+id+'/'+ '<%=topic.teacher_id%>/' + '<%=topic.course_id%>/'+'<%=topic.lo_id%>';
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        data:null,
+                        success: function(html){
+                        },
+                    }).done(function(data) {
+                        console.log('deleted');
+                    });
+                  }
+                  $(this).parent('form').parent('div').remove();
+                  $('form').data('serialize',$('form').serialize());
+                }
+                return false;
+            });
+          });
+
+          /*Update Topic*/
+          function update_topic(){
+              var loading =`<div class="saving">Saving<span>.</span><span>.</span><span>.</span></div>`;
+              $('#update_topic_btn').html(loading);
+              $.ajax({
+                  url: '/course/update-topic',
+                  type: 'POST',
+                  data: $('#update_topic_form').serialize(),
+                  success: function(html){
+                    setTimeout(function() {
+                      $('#update_topic_btn').html('<i class="fa fa-save"></i> Saved');
+                     }, 2000);
+                  },
+              }).done(function(data) {
+                  console.log("success");
+                  $('form').data('serialize',$('form').serialize()); // On load save form current state
+              });
+
+            return false;
+          }
+
+          /*Submit Question data*/
+          function submit_question(form_id){
+              var loading =`<div class="saving">Saving<span>.</span><span>.</span><span>.</span></div>`;
+              $('#'+form_id+'_btn').html(loading);
+              var url='/course/question/add';
+              if($('#'+form_id+'_id').val()!='new'){
+                  url='/course/question/update';
+              }
+              $.ajax({
+                  url: url,
+                  type: 'POST',
+                  data: $('#'+form_id).serialize(),
+                  success: function(html){
+                    setTimeout(function() {
+                      $('#'+form_id+'_btn').html('<i class="fa fa-save"></i> Saved');
+                      //$('#'+form_id+'_btn').css("background-color", "#4CAF50");
+                      //$('#'+form_id+'_btn').css("border-color", "#4CAF50");
+                     }, 2000);
+                  },
+              }).done(function(data) {
+                  $('#'+form_id+'_id').val(data);
+                  console.log(data);
+                  $('#'+form_id).children('a').attr("id",data);
+                  $('form').data('serialize',$('form').serialize()); // On load save form current state
+              });
+
+            return false;
+          }
+
+          /*Prevent leave page while unsaved form*/
+          $('form').data('serialize',$('form').serialize()); // On load save form current state
+          $(window).bind('beforeunload', function(e){
+              if($('form').serialize()!=$('form').data('serialize'))return true;
+              else e=null; // i.e; if form state change show box not.
+          });
+        </script>
+        <div class="row">
+          <div class="col-12">
+            <a href="">
+                <button class="btn btn-primary add_field_button" title="New Question" aria-label="New Question">
+                    <i class="fa fa-plus" aria-hidden="true"></i> New Question
+                </button>
+            </a>
+          </div>
+        </div>
+    </div>
+	</div>
+</div>
+
+<%}else{%>
+  <div class="cbp-row wh-sensei-single-course-header">
+  	<div class="cbp-container">
+  		<div class="wh-sensei-title-wrap wh-padding">
+  			<h1>No result found!</h1>
+      </div>
+  	</div>
+  </div>
+<%}%>
+
+<!--<script src="/javascripts/bootstrap-toggle.min.js"></script>-->
+<!-- Include the Quill library
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+<!-- Initialize Quill editor
+<script>
+  var quill = new Quill('#editor', {
+    theme: 'snow'
+  });
+</script>
+-->
+<%- include('../partials/simple-footer') -%>
+<%- include('../partials/last-part') -%>

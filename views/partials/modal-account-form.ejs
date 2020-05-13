@@ -1,0 +1,102 @@
+<style media="screen">
+  .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place front is invalid - may break your css so removed */
+      padding-top: 100px; /* Location of the box - don't know what this does?  If it is to move your modal down by 100px, then just change top below to 100px and remove this*/
+      left: 0;
+      right:0; /* Full width (left and right 0) */
+      top: 0;
+      bottom: 0; /* Full height top and bottom 0 */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+      z-index: 9999; /* Sit on top - higher than any other z-index in your site*/
+  }
+
+  .closebtn {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+}
+.closebtn:hover {
+  opacity: 1;
+}
+.closebtn:before, .closebtn:after {
+  position: absolute;
+  left: 15px;
+  content: '';
+  height: 33px;
+  width: 2px;
+  background-color: #333;
+}
+.closebtn:before {
+  transform: rotate(45deg);
+}
+.closebtn:after {
+  transform: rotate(-45deg);
+}
+
+</style>
+<!-- Login Modal -->
+<div class="modal fade" id="modal-account-form" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Manage Account</h5>
+                <a href="" class="closebtn" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true"></span>
+                </a>
+            </div>
+            <div class="modal-body entry-content one whole wh-padding">
+                <div class="col-12">
+                    <form action="/update-account" method="post">
+                        <div class="row">
+                            <div class="col-6">
+                                <label>First Name <span class="required">*</span></label>
+                                <input name="fname" type="text" required="required" value="<%=account.fname%>" readonly>
+                            </div>
+                            <div class="col-6">
+                                <label>Last Name <span class="required">*</span></label>
+                                <input name="lname" type="text" required="required" value="<%=account.lname%>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Email <span class="required">*</span></label>
+                                <input name="email" type="text" required="required" value="<%=account.email%>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Username <span class="required">*</span></label>
+                                <input name="username" type="text" required="required" value="<%=account.username%>" readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Password <span class="required">*</span></label>
+                                <input name="password" type="password" required="required" value="<%=account.password%>">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Department <span class="required">*</span></label>
+                                <input name="department" type="text" required="required" value="<%=account.department%>">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-center ">
+                                    <p style="margin-top:15px;">
+                                      <input name="submit" type="submit" id="submit" class="submit" value="Update">
+                                    <p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

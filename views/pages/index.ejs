@@ -1,0 +1,76 @@
+<%- include('../partials/header') -%>
+
+<body class="home page-template page-template-template-home-transparent-header page-template-template-home-transparent-header-php page page-id-8797 wp-custom-logo woocommerce-no-js tribe-no-js header-top page-title-enabled skilled-sensei-paid_courses wpb-js-composer js-comp-ver-6.1 vc_responsive woocommerce">
+    <%- include('../partials/menus') -%>
+    <%- include('../partials/main-menu') -%>
+    <%# include('../partials/wh-style-switcher') %>
+    <script>
+        jQuery(function($) {
+            var $styleSwitcherToggle = $('.wh-switcher-toggle');
+            var $styleSwitcherContainer = $('#wh-style-switcher');
+            // var $cog                    = $styleSwitcherToggle.find('.fa-cog');
+            var speed = 200;
+
+              $styleSwitcherToggle.toggle(
+                function() {
+                    $styleSwitcherContainer.animate({
+                        left: 0
+                    }, speed);
+                    // $cog.toggleClass('fa-spin');
+                },
+                function() {
+                    $styleSwitcherContainer.animate({
+                        left: -123
+                    }, speed);
+                    // $cog.toggleClass('fa-spin');
+                }
+            );
+        });
+    </script>
+
+    <div class="cbp-row wh-content">
+        <div class="cbp-container wh-padding">
+            <%- include('../partials/slider') -%>
+            <%// include('../partials/feature-box') -%>
+            <%// include('../partials/card-box') -%>
+            <%// include('../partials/item-slider') -%>
+            <%// include('../partials/stats-block') -%>
+            <!--
+            <div class="vc_row-full-width vc_clearfix"></div>
+            <%// include('../partials/filter') -%>
+            <%// include('../partials/latest-post') -%>
+            <div class="vc_row-full-width vc_clearfix"></div>
+            <!-- Row Backgrounds
+            <div class="upb_color" data-bg-override="full" data-bg-color="" data-fadeout="" data-fadeout-percentage="30" data-parallax-content="" data-parallax-content-sense="30" data-row-effect-mobile-disable="true" data-img-parallax-mobile-disable="true" data-rtl="false" data-custom-vc-row="" data-vc="6.1" data-is_old_vc="" data-theme-support="" data-overlay="false" data-overlay-color="" data-overlay-pattern="" data-overlay-pattern-opacity="" data-overlay-pattern-size=""></div>
+            <%// include('../partials/about-us') -%>-->
+        </div>
+        <div class="vc_row-full-width vc_clearfix"></div>
+        <%// include('../partials/footer') -%>
+        <%// include('../partials/call-to-action') -%>
+    </div>
+
+
+    <!--Modal Forms-->
+
+    <%- include('../partials/modal-login-form') -%>
+    <%- include('../partials/modal-signup-form') -%>
+    <%- include('../partials/modal-status') -%>
+
+<!--
+    <input type="hidden" name="_aislin_cart_url" value="https://themeforest.net/item/skilled-school-education-courses-wordpress-theme/14564174?license=regular&amp;purchasable=source&amp;open_purchase_for_item_id=14564174">
+    <div class="aislin-demo-purchase-button outer">
+        <a href="https://1.envato.market/3rJ6k" target="_blank">
+
+            <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 415.441 415.441" fill="#fff" xml:space="preserve">
+                <path d="M324.63,22.533C135.173,226.428,80.309,371.638,80.309,371.638c41.149,47.743,111.28,43.72,111.28,43.72 			c73.921,2.31,119.192-43.522,119.192-43.522c91.861-92.516,80.549-355.302,80.549-355.302 			C372.769-23.891,324.63,22.533,324.63,22.533z"></path>
+                <path d="M32.369,181.983c0,0-28.983,57.964,18.859,155.495L178.367,58.01C176.916,58.538,63.691,98.037,32.369,181.983z"></path>
+            </svg>
+
+            Buy Skilled </a>
+    </div>
+-->
+    <!--Signup/Login-->
+
+    <%// include('../partials/side-wrap') -#%>
+    <%- include('../partials/simple-footer') -%>
+    <%- include('../partials/last-part') -%>

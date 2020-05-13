@@ -1,0 +1,98 @@
+<div class="header-mobile header-mobile-default">
+    <div id="wh-mobile-menu" class="respmenu-wrap">
+        <div class="respmenu-header">
+            <a href="#" class="respmenu-header-logo-link" style="width:100%">
+                <span style="letter-spacing:2px;text-transform:uppercase;color:black;font-weight: 800;font-family:Raleway;font-size:26px;"><img style="width:50px;margin-left:10px;" src="/images/tia_logo_dark.png" class="respmenu-header-logo" alt="Logo"> Test Item Analyzer</span>
+            </a>
+            <div class="respmenu-open">
+                <hr>
+                <hr>
+                <hr>
+            </div>
+        </div>
+        <div class="menu-main-menu-container">
+            <ul id="menu-main-menu" class="respmenu">
+                <li id="menu-item-13710" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-13710 msm-top-level-item"><a href="/dashboard">Dashboard</a></li>
+                <% if(accountType==1){%>
+                <li id="menu-item-13710" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-13710 msm-top-level-item"><a href="/create-course">Courses</a></li>
+                <li id="menu-item-13710" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-13710 msm-top-level-item"><a href="/assign-load">Loads</a></li>
+                <% }%>
+                <% if(status){%>
+                  <li id="menu-item-13710" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-13710 msm-top-level-item"><a href="#" data-toggle="modal" data-target="#modal-account-form">Account</a></li>
+                  <li id="menu-item-13729" class="senseiloginlogout menu-item menu-item-type-custom menu-item-object-custom menu-item-13729 msm-top-level-item"><a href="/logout">Logout</a></li>
+                <% }%>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<header class="cbp-row wh-header top">
+    <div id="sticky-wrapper" style="height: 0px;">
+        <div class="wh-main-menu-bar-wrapper" style="">
+            <div class="cbp-container">
+                <div class="wh-main-menu one whole wh-padding">
+                    <div id="cbp-menu-main">
+                        <div class="menu-main-menu-container">
+                            <style>
+                              #brand:hover{
+                                color:#ffc107;
+                              }
+                              .nav-link{
+                                font-family:Raleway;
+                                font-size:15px;
+                                text-transform:uppercase;
+                                font-weight: 500;
+                                color:rgb(255, 255, 255);
+                              }
+                              /* effect-shine */
+                              .effect-shine:hover {
+                                -webkit-mask-image: linear-gradient(-75deg, rgba(0,0,0,.6) 30%, #000 50%, rgba(0,0,0,.6) 70%);
+                                -webkit-mask-size: 200%;
+                                animation: shine 2s infinite;
+                              }
+
+                              @-webkit-keyframes shine {
+                                from {
+                                  -webkit-mask-position: 150%;
+                                }
+
+                                to {
+                                  -webkit-mask-position: -50%;
+                                }
+                              }
+
+                            </style>
+
+                            <nav class="navbar navbar-expand-lg">
+                              <a class="navbar-brand effect-box" href="#"><img style="width:50px;" src="/images/tia_logo.png" alt="Logo">  <span class="effect-shine" style="letter-spacing:2px;text-transform:uppercase;color:rgb(255, 255, 255);font-weight: 800;font-family:Raleway;font-size:18px;">Test Item Analyzer</span></a>
+                              <div class="collapse navbar-collapse" id="navbarNav">
+                                <ul class="navbar-nav">
+                                  <li class="nav-item active">
+                                    <a class="nav-link" href="/dashboard">Dashboard <span class="sr-only">(current)</span></a>
+                                  </li>
+
+                                  <% if(accountType==1){%>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="/create-course">Courses</a>
+                                  </li>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="/assign-load">Loads</a>
+                                  </li>
+                                  <% }%>
+                                  <li class="nav-item">
+                                    <a class="nav-link" href="#" data-toggle="modal" data-target="#modal-account-form" >Account</a>
+                                  </li>
+                                </ul>
+                              </div>
+                              <% if(status){%>
+                              <a  class="nav-link pull-right" href="/logout"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a>
+                              <% }%>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<%- include('../partials/modal-account-form') -%>

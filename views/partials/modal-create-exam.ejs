@@ -1,0 +1,204 @@
+<style>
+
+  .control {
+    display: block;
+    position: relative;
+    padding-left: 30px;
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .control input {
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+  }
+  .control__indicator {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    background: #e6e6e6;
+  }
+  .control--radio .control__indicator {
+    border-radius: 50%;
+  }
+  .control:hover input ~ .control__indicator,
+  .control input:focus ~ .control__indicator {
+    background: #ccc;
+  }
+  .control input:checked ~ .control__indicator {
+    background: #4CAF50;
+  }
+  .control:hover input:not([disabled]):checked ~ .control__indicator,
+  .control input:checked:focus ~ .control__indicator {
+    background: #4CAF50;
+  }
+  .control input:disabled ~ .control__indicator {
+    background: #e6e6e6;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .control__indicator:after {
+    content: '';
+    position: absolute;
+    display: none;
+  }
+  .control input:checked ~ .control__indicator:after {
+    display: block;
+  }
+  .control--checkbox .control__indicator:after {
+    left: 8px;
+    top: 4px;
+    width: 3px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .control--checkbox input:disabled ~ .control__indicator:after {
+    border-color: #7b7b7b;
+  }
+  .control--radio .control__indicator:after {
+    left: 7px;
+    top: 7px;
+    height: 6px;
+    width: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .control--radio input:disabled ~ .control__indicator:after {
+    background: #7b7b7b;
+  }
+
+</style>
+
+<!-- Create Exam Modal -->
+<div class="modal fade" id="create-exam" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Select Topics</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body entry-content one whole wh-padding">
+        <div class="row">
+          <div class="col-12">
+          <form id="create-exam-form" method="POST" action="/course/<%=course.course_id%>/create-exam">
+            <div class="form-group">
+              <label for="">Total Items: (5, 10, 50)</label>
+              <input name="exam_items" type="text" class="" placeholder="Input total items" required>
+            </div>
+
+            <div class="form-group">
+              <label for="">Exam Title: </label>
+              <input name="exam_title" type="text" class="" placeholder="Exam Title" required>
+            </div>
+
+            <div class="form-group">
+              <label for="">Exam Instruction: </label>
+              <textarea name="exam_instruction" rows="8" cols="80" required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="">Exam Time: </label>
+              <input name="exam_time" type="text" class="" placeholder="Exam Time" required>
+            </div>
+
+            <!--
+            <div class="form-group">
+              <label class="control control--checkbox">Generate random questions for this exam?
+                  <input onclick="if($(this).is(':checked')){$(this).val('1');}else{$(this).val('0');}" value="0" name="rand_option" type="checkbox"/>
+                  <div class="control__indicator"></div>
+              </label>
+            </div>
+            -->
+            <hr>
+            <div class="form-group">
+              <label for="" style="font-weight:bold;font-size:20px">Choose topic(s): </label>
+
+              <div class="control-group" id="load-topic">
+                  <!--
+                  <label class="control control--checkbox">Disabled
+                      <input type="checkbox" disabled="disabled" />
+                      <div class="control__indicator"></div>
+                  </label>
+                  <label class="control control--checkbox">Disabled & checked
+                      <input type="checkbox" disabled="disabled" checked="checked" />
+                      <div class="control__indicator"></div>
+                  </label>
+                  -->
+              </div>
+            </div>
+
+            <div class="form-group">
+              <textarea id="json-data" name="exam_lo" rows="8" cols="80" readonly hidden required></textarea>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button id="create-exam-btn" type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $("#create-exam-form").submit(function(){
+   if ($('input:checkbox').filter(':checked').length < 1){
+          alert("Check at least one learning objective!");
+          return false;
+   }
+      });
+  });
+
+  function load_topic(courseId){
+    $.ajax({
+        url: '/course/'+courseId+'/load-exam',
+        type: 'POST',
+        data: null,
+        success: function(html){
+        },
+    }).done(function(data) {
+
+
+        $('#load-topic').html('');
+        for(var i=0; i<data.length; i++){
+          var item = JSON.stringify(data[i]);
+          $('#load-topic').append(`
+          <label class="control control--checkbox">${data[i].lo_topic}
+              <input name="lo_checkbox[]" value='${item}' id="item_id_${data[i].lo_id}" onclick="remove_item(${i},${data[i].lo_id})" type="checkbox" checked="checked" />
+              <div class="control__indicator"></div>
+          </label>
+          `);
+        }
+        $('#json-data').val(JSON.stringify(data));
+
+        if(data.length==0){
+          $('#create-exam-form').html('No topics created yet!');
+        }
+    });
+  }
+
+  function remove_item(index,id){
+    var data = $('#json-data').val();
+    data = JSON.parse(data);
+
+    if($('#item_id_'+id).prop("checked") == false){
+      delete data[index];
+    }else{
+      var item = JSON.parse($('#item_id_'+id).val());
+      data[index] = item;
+    }
+    $('#json-data').val(JSON.stringify(data));
+  }
+
+</script>

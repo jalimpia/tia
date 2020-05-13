@@ -1,0 +1,104 @@
+<!-- Login Modal -->
+<style media="screen">
+  .closebtn {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  opacity: 0.3;
+}
+.closebtn:hover {
+  opacity: 1;
+}
+.closebtn:before, .closebtn:after {
+  position: absolute;
+  left: 15px;
+  content: ' ';
+  height: 33px;
+  width: 2px;
+  background-color: #333;
+}
+.closebtn:before {
+  transform: rotate(45deg);
+}
+.closebtn:after {
+  transform: rotate(-45deg);
+}
+
+</style>
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <a href="" class="closebtn" data-dismiss="modal" aria-label="Close">
+        <span></span>
+      </a>
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+
+      </div>
+      <div class="modal-body entry-content one whole wh-padding">
+
+                <div class="col-12">
+
+                    <form method="post" action="/login" id="loginform" class="login sensei">
+
+                        <p class="sensei-login-username form-row form-row-wide">
+
+                            <label for="sensei_user_login">Username or Email </label>
+
+                            <input type="text" name="username" id="sensei_user_login" class="input" value="" style="width:100%" required>
+
+                        </p>
+
+                        <p class="sensei-login-password form-row form-row-wide">
+
+                            <label for="sensei_user_pass"> Password </label>
+
+                            <input type="password" name="password" id="sensei_user_pass" class="input txt text" value="" style="width:100%" required>
+
+                        </p>
+                        <p class="remember_me">
+                            <label for="rememberme" class="inline">
+                                <input name="rememberme" type="checkbox" id="rememberme" value="forever"> Remember me
+                                <a style="float:right" href="#">Lost your password?</a>
+                            </label>
+                        </p>
+                        <p class="sensei-login-submit">
+                            <input type="submit" class="button" name="login" value="Login">
+                        </p>
+
+
+                        <div class="text-center w-full p-t-115">
+              						<span class="txt1">
+              							Not a member?
+              						</span>
+
+              						<a class="txt1 bo1 hov1" href="#" data-dismiss="modal" data-toggle="modal" data-target="#signupModal">
+              							Sign up now
+              						</a>
+              					</div>
+
+                        <div class="clear"></div>
+
+                    </form>
+
+                </div>
+
+      </div>
+      <!--
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+      -->
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $('#loginModal').on('shown.bs.modal', function () {
+    $('#myInput').trigger('focus')
+  });
+</script>

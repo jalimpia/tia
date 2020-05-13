@@ -1,0 +1,375 @@
+<%- include('../partials/header') -%>
+<link rel="stylesheet" href="/stylesheets/pure-min.css">
+<style>
+  .wh-header{
+    background: #6c757d;
+  }
+  .course-title{
+    width: 100%;
+    height:45px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
+  }
+  #menus{
+    margin-top:17px;
+  }
+  .entry{
+    font-size: 1rem;
+    padding: 15px;
+    box-sizing: border-box;
+    border: 1px solid #C7CDD1;
+    margin:2px;
+  }
+  .entry:hover{
+    background:#ecf0f1;
+    border-left: solid 2px;
+  }
+  .entry a{
+    font-family:'Raleway';
+    text-transform:uppercase;
+    font-weight:200px;
+    font-weight:800;
+    color:#000000;
+  }
+
+  @keyframes blink {
+      /**
+       * At the start of the animation the dot
+       * has an opacity of .2
+       */
+      0% {
+        opacity: .2;
+      }
+      /**
+       * At 20% the dot is fully visible and
+       * then fades out slowly
+       */
+      20% {
+        opacity: 1;
+      }
+      /**
+       * Until it reaches an opacity of .2 and
+       * the animation can start again
+       */
+      100% {
+        opacity: .2;
+      }
+  }
+
+  .saving span {
+      /**
+       * Use the blink animation, which is defined above
+       */
+      animation-name: blink;
+      /**
+       * The animation should take 1.4 seconds
+       */
+      animation-duration: 1.4s;
+      /**
+       * It will repeat itself forever
+       */
+      animation-iteration-count: infinite;
+      /**
+       * This makes sure that the starting style (opacity: .2)
+       * of the animation is applied before the animation starts.
+       * Otherwise we would see a short flash or would have
+       * to set the default styling of the dots to the same
+       * as the animation. Same applies for the ending styles.
+       */
+      animation-fill-mode: both;
+      font-weight:800;
+  }
+
+  .saving span:nth-child(2) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .2s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .2s;
+  }
+
+  .saving span:nth-child(3) {
+      /**
+       * Starts the animation of the third dot
+       * with a delay of .4s, otherwise all dots
+       * would animate at the same time
+       */
+      animation-delay: .4s;
+  }
+</style>
+<%- include('../partials/account-menu') -%>
+
+<% if(course) {%>
+<div class="cbp-row">
+  <div class="cbp-container">
+    <div class="one whole wh-padding">
+      <nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb">
+          <ul class="trail-items" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+              <li class="trail-item trail-begin"><a href="/dashboard" rel="home" itemprop="item"><span itemprop="name">Dashboard</span></a>
+                  <meta itemprop="position" content="1">
+              </li>
+              <li itemprop="itemListElement" itemscope=""  class="trail-item trail-end"><span itemprop="item"><span itemprop="name"><%=course.course_name%></span></span>
+                  <meta itemprop="position" content="2">
+              </li>
+          </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+<div class="cbp-row wh-sensei-single-course-header">
+	<div class="cbp-container">
+		<div class="wh-sensei-title-wrap wh-padding">
+			<h1><%=course.course_name%></h1>
+      <%=course.course_desc%>
+    </div>
+	</div>
+</div>
+
+<div class="cbp-row wh-sensei-single-course-header">
+    <div class="cbp-container">
+        <div class="wh-sensei-title-wrap wh-padding">
+            <div class="wpb_column vc_column_container vc_col-sm-12">
+                <div class="vc_column-inner">
+                    <div class="wpb_wrapper">
+                        <div class="tt_wrapper  ">
+                            <div class="timetable_clearfix tt_tabs tt_responsive event_layout_1 ui-tabs ui-widget ui-widget-content ui-corner-all">
+                                <div class="tt_navigation_wrapper">
+                                    <div class="tt_navigation_cell">
+                                        <ul class="timetable_clearfix tt_tabs_navigation events_filter ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                                            <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="learning-objective" aria-labelledby="ui-id-1" aria-selected="false" aria-expanded="false"><a href="#learning-objective" title="Learning Objectives" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-1">Learning Objectives</a></li>
+                                            <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="item-analysis" aria-labelledby="ui-id-3" aria-selected="false" aria-expanded="false"><a href="#item-analysis" title="Item Analysis" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-2">Item Analysis</a></li>
+                                            <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="examinations" aria-labelledby="ui-id-2" aria-selected="false" aria-expanded="false"><a href="#examinations" title="Examinations" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-3">Examinations</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="learning-objective" role="tabpanel" aria-hidden="true" style="display: none;">
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333;">TOPICS</h3>
+                                            <a href="/course/<%=course.course_id%>/create-topic">
+                                                <button class="btn btn-primary pull-right" title="Add Topic" aria-label="Add Exam">
+                                                    <i class="fa fa-plus" aria-hidden="true"></i> Add Topic
+                                                </button>
+                                            </a>
+
+                                            <form class="search-form-wrap search-for-courses">
+                                                <ul>
+                                                    <li>
+                                                        <input onkeyup="search_topic()" id="keyword" type="text" value="" name="keyword" placeholder="Search Topic">
+                                                    </li>
+                                                </ul>
+                                            </form>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <div class="course type-course" id="topics_div">
+                                              <%if(tos){%>
+                                              <%i=0%>
+                                              <% tos.forEach(function(tos, index){ %>
+                                                  <div class="entry" id="lo_div_<%=tos.lo_id%>">
+                                                      <a id="delete_topic_<%=tos.lo_id%>" href="#" onclick="delete_topic(<%=tos.lo_id%>);return false;"><span class="lnr lnr-trash pull-right"></span></a>
+                                                      <a class="widget-title" href="/course/<%=course.course_id%>/edit-topic/<%=tos.lo_id%>">
+                                                          <%=tos.lo_topic%>
+                                                      </a>
+                                                      <div class="sensei-course-meta">
+                                                          <span><i class="icon-skilledtime4"></i> <%=tos.lo_time%> Hours</span>
+                                                          <br>
+                                                          <span>Total question: <%=qnum[i]%></span>
+                                                          <br>
+                                                          <span>Desc: <%=tos.lo_desc%></span>
+                                                      </div>
+                                                  </div>
+                                              <%i++%>
+                                              <% }); %>
+                                              <% } else{%>
+                                                <p>No topics yet!</p>
+                                              <% } %>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="item-analysis" aria-labelledby="ui-id-3" role="tabpanel" aria-hidden="true" style="display: none;">
+                                  <div class="row">
+                                      <div class="col-12">
+                                          <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333;">ITEM ANALYSIS</h3>
+                                              <button class="btn btn-primary pull-right" title="Generate Item Analysis" aria-label="Generate Item Analysis" data-toggle="modal" data-target="#create-tia">
+                                                  <i class="fa fa-plus" aria-hidden="true"></i> Generate Item Analysis
+                                              </button>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                      <div class="col-12">
+
+                                        <link rel="stylesheet" href="/stylesheets/keroui.css">
+
+                                        <div id="generated_stats">
+                                        </div>
+
+                                        <div id="generated_tia">
+                                        </div>
+                                        <div id="generated_rpbi">
+                                        </div>
+                                        <button onclick="$('#printTable').addClass('table');Popup($('#generated_tia').html(),$('#generated_rpbi').html()); $('#printTable').removeClass('table')" class="pure-button course">Print Result</button>
+                                      </div>
+                                  </div>
+                                  <%- include('../partials/modal-create-tia') -%>
+                                  <%- include('../partials/modal-update-question') -%>
+                                </div>
+
+                                <div id="examinations" aria-labelledby="ui-id-2" role="tabpanel" aria-hidden="true" style="display: none;">
+                                  <div class="row">
+                                      <div class="col-12">
+                                          <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333; ">EXAM</h3>
+                                          <button onclick="load_topic(<%=course.course_id%>)" type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#create-exam">
+                                            <i class="fa fa-plus" aria-hidden="true"></i> Create Exam
+                                          </button>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-12">
+                                        <div class="course type-course" id="exam_div">
+                                          <!--code-->
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">
+                                      $(document).ready(function(){
+                                        $.ajax({
+                                            url: '/course/<%=course.course_id%>/fetch-exam',
+                                            type: 'POST',
+                                            data: null,
+                                            success: function(html){
+                                            },
+                                        }).done(function(data) {
+                                            if(data.length>0){
+                                              console.log(data);
+                                              $('#exam_div').html('');
+                                              for(var i=0; i<data.length; i++){
+                                                var status = '';
+                                                if(data[i].exam_published==1){
+                                                  status='<span class="badge badge-success">Published</span>';
+                                                }else{
+                                                  status='<span class="badge badge-warning">Not published</span>';
+                                                }
+                                                $('#exam_div').append(`
+                                                <div class="entry">
+                                                    ${status}
+                                                    <a class="widget-title" href="/course/<%=course.course_id%>/edit-exam/${data[i].exam_id}">
+                                                        ${data[i].exam_title}
+                                                    </a>
+                                                    <div class="sensei-course-meta">
+                                                        <span><i class="icon-skilledtime4"></i> <b>${data[i].exam_time} Hours</b></span>
+                                                        <br>
+                                                        <span>Total items: <b>${data[i].exam_items}</b></span>
+                                                        <br>
+                                                        <span>Instruction: ${data[i].exam_instruction}</span>
+                                                    </div>
+                                                    <a href="/course/<%=course.course_id%>/preview-exam/${data[i].exam_id}/${data[i].exam_title}"><button class="pure-button">Preview Exam</button></a>
+                                                </div>
+                                                `);
+                                              }
+                                          }else{
+                                            $('#exam_div').append(`<p>No exam created yet!</p>`);
+                                          }
+                                        });
+                                      });
+                                    </script>
+                                  </div>
+                                  <div class="row">
+                                    <!-- Modal -->
+                                      <%- include('../partials/modal-create-exam') -%>
+                                    <!-- End Modal -->
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%}else{%>
+  <div class="cbp-row wh-sensei-single-course-header">
+  	<div class="cbp-container">
+  		<div class="wh-sensei-title-wrap wh-padding">
+  			<h1>No result found!</h1>
+      </div>
+  	</div>
+  </div>
+<%}%>
+
+<script type="text/javascript">
+  function search_topic(){
+    var keyword = $('#keyword').val();
+    $.ajax({
+      url:'/search-topic',
+      type:'POST',
+      dataType: "json",
+      data:{"keyword":keyword,"course_id":<%=course.course_id%>}
+    }).done(function(data){
+      if(data!='0'){
+        console.log(data);
+        var topic='';
+          for(var i=0; i<data.length; i++){
+                topic+=`
+                <div class="entry" id="lo_div_${data[i].lo_id}">
+                    <a id="delete_topic_${data[i].lo_id}" href="#" onclick="delete_topic(${data[i].lo_id});return false;"><span class="lnr lnr-trash pull-right"></span></a>
+                    <a class="widget-title" href="/course/<%=course.course_id%>/edit-topic/${data[i].lo_id}">
+                        ${data[i].lo_topic}
+                    </a>
+                    <div class="sensei-course-meta">
+                        <span><i class="icon-skilledtime4"></i> ${data[i].lo_time} Hours</span>
+                        <br>
+                        <span>Total question: </span>
+                        <br>
+                        <span>Desc: ${data[i].lo_desc} </span>
+                    </div>
+                </div>
+                `;
+          }
+          $('#topics_div').html('');
+          $('#topics_div').html(topic);
+      }else{
+        $('#topics_div').html("<div class='cbp-row'><div class='one whole wh-padding'><h1>No result found!</h1></div></div>");
+      }
+    });
+  }
+  function delete_topic(id){
+    if (confirm("Are you sure you want to delete this topic?")) {
+
+      var loading =`<div class="saving pull-right">Deleting<span>.</span><span>.</span><span>.</span></div>`;
+      $(`#delete_topic_${id}`).children('span').html(loading);
+
+      $.ajax({
+        url:'/delete-topic/'+id,
+        type:'POST',
+        data:null,
+        success: function(html){
+          setTimeout(function() {
+            $(`#lo_div_${id}`).fadeTo(2000, 1000).slideUp(1000, function(){
+                $(`#lo_div_${id}`).slideUp(1000);
+                $(`#lo_div_${id}`).remove();
+            });
+          }, 500);
+        },
+      }).done(function(data){
+        console.log(data);
+      });
+    }else{
+    return false;
+    }
+  }
+
+</script>
+
+<%- include('../partials/simple-footer') -%>
+<%- include('../partials/last-part') -%>

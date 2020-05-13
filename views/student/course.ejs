@@ -1,0 +1,202 @@
+<%- include('../partials/header') -%>
+<link rel="stylesheet" href="/stylesheets/pure-min.css">
+<style>
+  .wh-header{
+    background: #6c757d;
+  }
+  .course-title{
+    width: 100%;
+    height:45px;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis; // This is where the magic happens
+  }
+  #menus{
+    margin-top:17px;
+  }
+  .entry{
+    font-size: 1rem;
+    padding: 15px;
+    box-sizing: border-box;
+    border: 1px solid #C7CDD1;
+    margin:2px;
+  }
+  .entry:hover{
+    background:#ecf0f1;
+    border-left: solid 2px;
+  }
+  .entry a{
+    font-family:'Raleway';
+    text-transform:uppercase;
+    font-weight:200px;
+    font-weight:800;
+    color:#000000;
+  }
+</style>
+<%- include('../partials/account-menu') -%>
+
+<% if(course) {%>
+<div class="cbp-row">
+  <div class="cbp-container">
+    <div class="one whole wh-padding">
+      <nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb">
+          <ul class="trail-items" itemscope="" itemtype="http://schema.org/BreadcrumbList">
+              <li class="trail-item trail-begin"><a href="/dashboard" rel="home" itemprop="item"><span itemprop="name">Dashboard</span></a>
+                  <meta itemprop="position" content="1">
+              </li>
+              <li itemprop="itemListElement" itemscope=""  class="trail-item trail-end"><span itemprop="item"><span itemprop="name"><%=course.course_name%></span></span>
+                  <meta itemprop="position" content="2">
+              </li>
+          </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+<div class="cbp-row wh-sensei-single-course-header">
+	<div class="cbp-container">
+		<div class="wh-sensei-title-wrap wh-padding">
+			<h1><%=course.course_name%></h1>
+      <%=course.course_desc%>
+    </div>
+	</div>
+</div>
+
+<div class="cbp-row wh-sensei-single-course-header">
+    <div class="cbp-container">
+        <div class="wh-sensei-title-wrap wh-padding">
+            <div class="wpb_column vc_column_container vc_col-sm-12">
+                <div class="vc_column-inner">
+                    <div class="wpb_wrapper">
+                        <div class="tt_wrapper  ">
+                            <div class="timetable_clearfix tt_tabs tt_responsive event_layout_1 ui-tabs ui-widget ui-widget-content ui-corner-all">
+                                <div class="tt_navigation_wrapper">
+                                    <div class="tt_navigation_cell">
+                                        <ul class="timetable_clearfix tt_tabs_navigation events_filter ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all" role="tablist">
+                                            <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="examinations" aria-labelledby="ui-id-2" aria-selected="false" aria-expanded="false"><a href="#examinations" title="Examinations" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-1">Examinations</a></li>
+                                            <li class="ui-state-default ui-corner-top" role="tab" tabindex="-1" aria-controls="learning-objective" aria-labelledby="ui-id-1" aria-selected="false" aria-expanded="false"><a href="#learning-objective" title="Learning Objectives" class="ui-tabs-anchor" role="presentation" tabindex="-1" id="ui-id-2">Learning Objectives</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="learning-objective" role="tabpanel" aria-hidden="true" style="display: none;">
+
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333;">TOPICS</h3>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                          <div class="course type-course">
+                                              <%if(tos){%>
+                                              <%i=0%>
+                                              <% tos.forEach(function(tos, index){ %>
+                                                  <div class="entry">
+                                                      <a class="widget-title" href="#">
+                                                          <%=tos.lo_topic%>
+                                                      </a>
+                                                      <div class="sensei-course-meta">
+                                                          <span>Time: <%=tos.lo_time%> Hours</span>
+                                                          <br>
+                                                          <span>Desc: <%=tos.lo_desc%></span>
+                                                      </div>
+                                                  </div>
+                                              <%i++%>
+                                              <% }); %>
+                                              <% } else{%>
+                                                <p>No topics yet!</p>
+                                              <% } %>
+                                          </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="examinations" aria-labelledby="ui-id-2" role="tabpanel" aria-hidden="true" style="display: none;">
+                                  <div class="row">
+                                      <div class="col-12">
+                                          <h3 class="pull-left" style="font-family:'Raleway';font-weight:800;color:#333333; ">EXAM</h3>
+                                      </div>
+                                  </div>
+                                  <div class="row">
+                                    <div class="col-12">
+                                        <div class="course type-course" id="exam_div">
+                                          <!--code-->
+                                        </div>
+                                    </div>
+                                    <script type="text/javascript">
+                                      $(document).ready(function(){
+                                        $.ajax({
+                                            url: '/course/<%=course.course_id%>/fetch-exam',
+                                            type: 'POST',
+                                            data: null,
+                                            success: function(html){
+                                            },
+                                        }).done(function(data) {
+                                            if(data.length>0){
+                                              console.log(data);
+                                              $('#exam_div').html('');
+                                              for(var i=0; i<data.length; i++){
+                                                $('#exam_div').append(`
+                                                <div class="entry" id="exam_div_${i}">
+                                                    <a class="widget-title" href="#">
+                                                        ${data[i].exam_title}
+                                                    </a>
+                                                    <div class="sensei-course-meta">
+                                                        <span><i class="icon-skilledtime4"></i> <b>${data[i].exam_time} Hours</b></span>
+                                                        <br>
+                                                        <span>Total items: <b>${data[i].exam_items}</b></span>
+                                                        <br>
+                                                        <span>Instruction: ${data[i].exam_instruction}</span>
+                                                    </div>
+                                                    <a id="exam_btn_${i}" href="/course/<%=course.course_id%>/preview-exam/${data[i].exam_id}/${data[i].exam_title}"><button class="pure-button" >Take Exam</button></a>
+                                                </div>
+                                                `);
+                                                  /*check if taken*/
+                                                  $.ajax({
+                                                  url: `/check-taken/${data[i].exam_id}/${data[i].exam_items}`,
+                                                  type: 'POST',
+                                                  data: null,
+                                                  async:false,
+                                                  success: function(html){
+                                                  },
+                                                  }).done(function(data) {
+                                                    if(data!='0'){
+                                                      console.log(data);
+                                                      $(`#exam_btn_${i}`).html(`<button class="pure-button" >See Result</button>`);
+                                                    }
+                                                  });
+
+                                              }
+                                          }else{
+                                            $('#exam_div').append(`<p>No exam created yet!</p>`);
+                                          }
+                                        });
+                                      });
+                                    </script>
+                                  </div>
+                                  <div class="row">
+                                    <!-- Modal -->
+                                      <%- include('../partials/modal-create-exam') -%>
+                                    <!-- End Modal -->
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%}else{%>
+  <div class="cbp-row wh-sensei-single-course-header">
+  	<div class="cbp-container">
+  		<div class="wh-sensei-title-wrap wh-padding">
+  			<h1>No result found!</h1>
+      </div>
+  	</div>
+  </div>
+<%}%>
+
+<%- include('../partials/simple-footer') -%>
+<%- include('../partials/last-part') -%>
