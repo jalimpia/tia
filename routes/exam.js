@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var conn = require('../model/config');
 var SHA256 = require('crypto-js/sha256');
-
+var MSWS = require('msws'); /*Random Answers*/
 
 /*Load Learning Objectives*/
 router.post('/course/:courseId/load-exam', function(req, res) {
@@ -194,8 +194,15 @@ router.post('/course/:courseId/fetch-question/:examId/:loId/:itemNo', function(r
   });
 });
 
+
+
+
 /*Preview Exams*/
 router.get('/course/:courseId/preview-exam/:examId/:examName', function(req, res) {
+
+
+
+
   res.locals.account = req.session.account;
   var sql = `SELECT
                 q.question_desc,
@@ -214,10 +221,39 @@ router.get('/course/:courseId/preview-exam/:examId/:examName', function(req, res
   var sql3 = `SELECT * from taken_exam_tbl WHERE exam_id='${req.params.examId}' AND student_id=${req.session.userId}`;
 
   conn.query(sql, function(err, result) {
+      var prng = new MSWS();
+      var seed = prng.getSeed();
+      //prng.setSeed(seed);
+      prng.setSeed(new Date().getTime());
+      var order =[];
+
+      for(var i=0; i<result.length; i++){
+        var sequence =[];
+
+        while(sequence.length < 4){
+            var r = prng.getInt(4, 1);
+            var ans;
+            if(r==1){
+              ans='A';
+            }else if (r==2) {
+              ans='B';
+            }else if (r==3) {
+              ans='C';
+            }else if (r==4) {
+              ans='D';
+            }
+            if(sequence.indexOf(ans) === -1) sequence.push(ans);
+        }
+
+        order.push(sequence);
+      }
+      console.log(order);
+
       if (err) {
           res.send(err);
           console.log(err);
       }else{
+
         conn.query(sql2, function(err, result2) {
           if (err) {
               res.send(err);
@@ -232,10 +268,11 @@ router.get('/course/:courseId/preview-exam/:examId/:examName', function(req, res
                     var url='';
                     if(req.session.accountType==1){
                       //url='pages/preview-exam';
-                      url='student/take-exam';
+                      url='pages/preview-exam';
                     }else{
                       url='student/take-exam';
                     }
+
                     res.render(url, {
                         title: 'Take '+req.params.examName,
                         status:req.session.userId,
@@ -244,8 +281,10 @@ router.get('/course/:courseId/preview-exam/:examId/:examName', function(req, res
                         course_id:req.params.courseId,
                         exam_info:result2[0],
                         exam_questions:result,
-                        exam_result:null
+                        exam_result:null,
+                        random:order
                     });
+
                   }else{
                     res.render('student/taken-exam', {
                         title: req.params.examName,
@@ -268,6 +307,7 @@ router.get('/course/:courseId/preview-exam/:examId/:examName', function(req, res
 
 /*Checker*/
 router.post('/check-exam/:examId/:examItems', function(req, res) {
+
   var data = req.body;
   data = JSON.parse(data.exam);
   var sql = ``;
@@ -278,6 +318,7 @@ router.post('/check-exam/:examId/:examItems', function(req, res) {
     if (err) {
       console.log(err);
     }else{
+
         var total_score=0;
         /*Check if student answer is correct from database*/
         var answer_correct_wrong = [];
@@ -290,32 +331,38 @@ router.post('/check-exam/:examId/:examItems', function(req, res) {
             answer_correct_wrong.push(0);
           }
         }
-        var ExamInfo = {
-          student_id:req.session.userId,
-          exam_id:req.params.examId,
-          exam_item:req.params.examItems,
-          exam_score:total_score
-        };
-        conn.query('INSERT INTO taken_exam_tbl SET ?', ExamInfo, function(err, result2) {
-            //if(err) throw err
-            if (err) {
-                res.send(String(err));
-                console.log(err);
-            } else {
-              var sql2 = ``;
-              for(var i=0;i<data.length;i++){
-                sql2+= `INSERT INTO item_analysis_tbl (exam_id,student_id,question_identifier,score) values ('${req.params.examId}',${req.session.userId},'${data[i].qid}',${answer_correct_wrong[i]});`;
-              }
-              conn.query(sql2, function(err, result3) {
-                if (err) {
-                    res.send(String(err));
-                    console.log(err);
-                }else{
-                    res.send(String(total_score));
+
+        if(req.session.accountType==1){
+          res.send(String(total_score));
+        }else{
+          var ExamInfo = {
+            student_id:req.session.userId,
+            exam_id:req.params.examId,
+            exam_item:req.params.examItems,
+            exam_score:total_score
+          };
+
+          conn.query('INSERT INTO taken_exam_tbl SET ?', ExamInfo, function(err, result2) {
+              //if(err) throw err
+              if (err) {
+                  res.send(String(err));
+                  console.log(err);
+              } else {
+                var sql2 = ``;
+                for(var i=0;i<data.length;i++){
+                  sql2+= `INSERT INTO item_analysis_tbl (exam_id,student_id,question_identifier,score) values ('${req.params.examId}',${req.session.userId},'${data[i].qid}',${answer_correct_wrong[i]});`;
                 }
-              });
-            }
-        });
+                conn.query(sql2, function(err, result3) {
+                  if (err) {
+                      res.send(String(err));
+                      console.log(err);
+                  }else{
+                      res.send(String(total_score));
+                  }
+                });
+              }
+          });
+        }
     }
   });
 
