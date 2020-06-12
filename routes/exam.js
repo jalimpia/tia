@@ -401,4 +401,18 @@ router.post('/generate-tia/:examId/', function(req, res) {
     }
   });
 });
+
+
+/*Delete Exam*/
+router.post('/delete-exam/:id', function(req, res) {
+  var sql = `DELETE from exam_tbl WHERE exam_id='${req.params.id}' AND teacher_id=${req.session.userId}; DELETE from items_tbl WHERE exam_id='${req.params.id}'; DELETE from item_analysis_tbl WHERE exam_id='${req.params.id}'; UPDATE question_tbl SET exam_id=NULL where exam_id='${req.params.id}'`;
+  conn.query(sql, function (err, result) {
+    if (err){
+      console.log(err);
+    }else{
+      console.log("Number of records deleted: " + result.affectedRows);
+      res.send(result);
+    }
+  });
+});
 module.exports = router;

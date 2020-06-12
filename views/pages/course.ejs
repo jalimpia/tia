@@ -260,8 +260,9 @@
                                                   status='<span class="badge badge-warning">Not published</span>';
                                                 }
                                                 $('#exam_div').append(`
-                                                <div class="entry">
+                                                <div class="entry" id="exam_div_${data[i].exam_id}">
                                                     ${status}
+                                                    <a id="delete_exam_${data[i].exam_id}" href="#" onclick="delete_exam('${data[i].exam_id}');return false;"><span class="lnr lnr-trash pull-right"></span></a>
                                                     <a class="widget-title" href="/course/<%=course.course_id%>/edit-exam/${data[i].exam_id}">
                                                         ${data[i].exam_title}
                                                     </a>
@@ -369,6 +370,33 @@
     }
   }
 
+
+
+  function delete_exam(id){
+    if (confirm("Are you sure you want to delete this exam?")) {
+
+      var loading =`<div class="saving pull-right">Deleting<span>.</span><span>.</span><span>.</span></div>`;
+      $(`#delete_exam_${id}`).children('span').html(loading);
+
+      $.ajax({
+        url:'/delete-exam/'+id,
+        type:'POST',
+        data:null,
+        success: function(html){
+          setTimeout(function() {
+            $(`#exam_div_${id}`).fadeTo(2000, 1000).slideUp(1000, function(){
+                $(`#exam_div_${id}`).slideUp(1000);
+                $(`#exam_div_${id}`).remove();
+            });
+          }, 500);
+        },
+      }).done(function(data){
+        console.log(data);
+      });
+    }else{
+    return false;
+    }
+  }
 </script>
 
 <%- include('../partials/simple-footer') -%>

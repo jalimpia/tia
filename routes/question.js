@@ -89,7 +89,6 @@ router.post('/course/question/:action', function (req, res) {
                 'question_pa_4': req.body.question_pa_4,
                 'question_correct': req.body.question_correct
             }
-
             var qid = req.body.question_identifier;
             if(qid=='new'){
               qid=question_identifier;
@@ -186,7 +185,8 @@ router.post('/course/question/delete/:id/:tid/:cid/:lid/:examId', function (req,
 
 
 router.post('/course/:courseId/load-questions/:loId', function (req, res) {
-    conn.query(`SELECT * from question_tbl WHERE exam_id IS NULL AND course_id = ${req.params.courseId} AND lo_id=${req.params.loId} AND teacher_id = ${req.session.userId}`, function(err, result) {
+    //conn.query(`SELECT * from question_tbl WHERE exam_id IS NULL AND course_id = ${req.params.courseId} AND lo_id=${req.params.loId} AND teacher_id = ${req.session.userId}`, function(err, result) {
+    conn.query(`SELECT * from question_tbl WHERE course_id = ${req.params.courseId} AND lo_id=${req.params.loId} AND teacher_id = ${req.session.userId}`, function(err, result) {
         //if(err) throw err
         if (err) {
           console.log(err);
@@ -222,8 +222,8 @@ var seed = prng.getSeed();
 prng.setSeed(new Date().getTime());
 
 router.post('/random/question/:loId/:qid', function (req, res) {
-  //var sql = `SELECT * from question_tbl WHERE lo_id=${req.params.loId} AND question_identifier <> '${req.params.qid}' AND teacher_id = ${req.session.userId}`;
-  var sql = `SELECT * from question_tbl WHERE lo_id=${req.params.loId} AND exam_id IS NULL AND teacher_id = ${req.session.userId}`;
+  var sql = `SELECT * from question_tbl WHERE lo_id=${req.params.loId} AND question_identifier <> '${req.params.qid}' AND teacher_id = ${req.session.userId}`;
+  //var sql = `SELECT * from question_tbl WHERE lo_id=${req.params.loId} AND exam_id IS NULL AND teacher_id = ${req.session.userId}`;
   conn.query(sql, function(err, result) {
     if (err) {
       console.log(err);
